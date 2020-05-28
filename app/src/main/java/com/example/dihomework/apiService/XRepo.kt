@@ -9,27 +9,22 @@ import javax.security.auth.callback.Callback
 
 class XRepo(private val apiService: ApiService) {
 
-    private lateinit var response: ((String) -> Unit)
-    private val handler = Handler(Looper.getMainLooper()) {
-        response.invoke(it.obj as String)
-        true
-    }
+    //private lateinit var callResponse: ((String) -> Unit)
 
     fun load(response: (String) -> Unit){
-        this.response = response
-        val message = handler.obtainMessage()
-        apiService.getAdvice().enqueue(object : retrofit2.Callback<Advice> {
+        //this.callResponse = response
+
+        var call = apiService.getAdvice()
+        call.enqueue(object : retrofit2.Callback<Advice> {
             override fun onResponse(call: Call<Advice>, response: Response<Advice>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        message.obj = it.slip.advice
-                        message.sendToTarget()
+                        response(it.slip.advice)
+                        //callResponse.invoke(it.slip.advice)
                     }
                 }
             }
             override fun onFailure(call: Call<Advice>, t: Throwable) {
-                message.obj = "ERROR"
-                message.sendToTarget()
             }
         })
 

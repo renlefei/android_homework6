@@ -20,8 +20,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        refresh.setOnClickListener {
+            viewModel.load()
+        }
 
-        viewModel.load()
         viewModel.result.observe(this, Observer {
             text_advice.text = it
         })
